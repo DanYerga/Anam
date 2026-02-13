@@ -222,7 +222,7 @@ app/
 - Internet connection for AI features
 
 ### Method 1: Download APK
-1. Go to [Releases](https://github.com/yourusername/anam/releases)
+1. Go to [Releases](https://github.com/DanYerga/Anam/releases/tag/v1.0.0)
 2. Download the latest `ANAM-v1.0.apk`
 3. Install APK (allow installation from unknown sources)
 
@@ -285,7 +285,7 @@ cd anam
       <br />
       <sub>Team Lead & Full-Stack Engineer</sub>
       <br />
-      <a href="https://github.com/username">GitHub</a>
+      <a href="https://github.com/DanYerga">GitHub</a>
     </td>
     <td align="center">
       <img src="https://via.placeholder.com/100" width="100px;" alt=""/>
