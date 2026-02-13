@@ -9,7 +9,7 @@
   
   **AI-powered preventive pregnancy monitoring system**
   
-  [📱 Download APK](#installation) •[💻 Live Dashboard Demo](dashbord.html) [📖 Documentation](#documentation) • [🎯 About](#about)
+  [📱 Download APK](#installation) •[💻 Live Dashboard Demo](dashboard.html) [📖 Documentation](#documentation) • [🎯 About](#about)
   
 </div>
 
