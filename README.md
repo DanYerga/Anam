@@ -85,7 +85,7 @@ ANAM is a **two-component system**:
 ### For Patients:
 
 #### 🍎 Food Tracking
-- Meal logging with photo upload
+- Meal logging with description
 - AI-powered food recognition
 - Trigger analysis (dairy → bloating 80%)
 - Personalized dietary recommendations
@@ -104,7 +104,6 @@ ANAM is a **two-component system**:
 
 #### 📊 Health Dashboard
 - Visualization of all health metrics
-- Week-by-week pregnancy calendar
 - Trimester progress tracking
 - Complete history of entries
 
@@ -229,7 +228,7 @@ app/
 ### Method 2: Build from Source
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/anam.git
+git clone https://github.com/DanYerga/Anam.git
 cd anam
 
 # Open in Android Studio
