@@ -294,7 +294,6 @@ cd anam
       <br />
       <sub>UI/UX Designer</sub>
       <br />
-      <a href="https://github.com/username">GitHub</a>
     </td>
     <td align="center">
       <img src="https://via.placeholder.com/100" width="100px;" alt=""/>
@@ -303,7 +302,6 @@ cd anam
       <br />
       <sub>Researcher</sub>
       <br />
-      <a href="https://github.com/username">GitHub</a>
     </td>
   </tr>
 </table>
@@ -357,11 +355,10 @@ cd anam
 
 We welcome community contributions! Here's how you can help:
 
-1. 🐛 **Report bugs** via [Issues](https://github.com/yourusername/anam/issues)
-2. 💡 **Suggest features** via [Discussions](https://github.com/yourusername/anam/discussions)
-3. 🔧 **Submit Pull Requests** with improvements
-4. 📖 **Improve documentation**
-5. ⭐ **Star the repository!**
+1. 🐛 **Report bugs** via [Issues](https://github.com/DanYerga/Anam/issues)
+2. 🔧 **Submit Pull Requests** with improvements
+3. 📖 **Improve documentation**
+4. ⭐ **Star the repository!**
 
 ### Guidelines:
 - Follow existing code style
@@ -392,16 +389,6 @@ This project is licensed under the [MIT License](LICENSE).
 Special thanks to:
 - **Anthropic** for Claude API
 - Open-source community for tools and libraries
-
----
-
-## 📚 Documentation
-
-- [API Documentation](docs/API.md)
-- [User Guide](docs/USER_GUIDE.md)
-- [Doctor's Manual](docs/DOCTOR_MANUAL.md)
-- [Contributing Guide](CONTRIBUTING.md)
-- [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ---
 
