@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANAM - Панель Врача</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eaf6 100%);
+            overflow-x: hidden;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #BA68C8 0%, #9C27B0 50%, #7B1FA2 100%);
+            box-shadow: 4px 0 20px rgba(156, 39, 176, 0.3);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-section {
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .doctor-info h3 {
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .doctor-info p {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 30px 0;
+        }
+
+        .nav-item {
+            padding: 18px 30px;
+            color: white;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(255,255,255,0.2);
+            border-left-color: white;
+        }
+
+        .nav-icon {
+            margin-right: 15px;
+            font-size: 22px;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .welcome-text h1 {
+            font-size: 36px;
+            background: linear-gradient(135deg, #BA68C8, #9C27B0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .welcome-text p {
+            color: #757575;
+            font-size: 16px;
+        }
+
+        /* ========== STATS CARDS ========== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(156, 39, 176, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(156, 39, 176, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #BA68C8, #9C27B0);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #9C27B0;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #757575;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .stat-change {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .stat-change.negative {
+            background: rgba(244, 67, 54, 0.1);
+            color: #F44336;
+        }
+
+        /* ========== PATIENTS TABLE ========== */
+        .patients-section {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(156, 39, 176, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2D2D2D;
+        }
+
+        .search-box {
+            padding: 12px 24px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            width: 320px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #BA68C8;
+            box-shadow: 0 0 0 4px rgba(186, 104, 200, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 18px;
+            color: #757575;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 2px solid #F5F5F5;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #F5F5F5;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        tbody tr:hover {
+            background: rgba(186, 104, 200, 0.05);
+        }
+
+        tbody td {
+            padding: 20px 18px;
+            font-size: 14px;
+        }
+
+        .patient-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #BA68C8, #E1BEE7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .patient-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .patient-name {
+            font-weight: 600;
+            color: #2D2D2D;
+            font-size: 15px;
+        }
+
+        .patient-id {
+            color: #9E9E9E;
+            font-size: 13px;
+        }
+
+        .risk-badge {
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .risk-low {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .risk-medium {
+            background: rgba(255, 193, 7, 0.1);
+            color: #FF9800;
+        }
+
+        .risk-high {
+            background: rgba(244, 67, 54, 0.1);
+            color: #F44336;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #BA68C8, #9C27B0);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+        }
+
+        /* ========== PATIENT DETAIL VIEW ========== */
+        .patient-detail {
+            display: none;
+        }
+
+        .patient-detail.active {
+            display: block;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            color: #2D2D2D;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 24px;
+        }
+
+        .back-btn:hover {
+            background: #F5F5F5;
+            border-color: #BA68C8;
+        }
+
+        .patient-passport {
+            background: linear-gradient(135deg, #BA68C8 0%, #9C27B0 100%);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 32px;
+            color: white;
+            box-shadow: 0 8px 30px rgba(156, 39, 176, 0.3);
+        }
+
+        .passport-grid {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .patient-avatar-large {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .patient-info-detail h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .patient-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.2);
+            padding: 14px 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .meta-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .anamnez-warning {
+            background: rgba(255, 193, 7, 0.2);
+            padding: 16px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #FFC107;
+        }
+
+        /* ========== DETAIL CARDS ========== */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .detail-card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #F5F5F5;
+        }
+
+        .card-icon {
+            font-size: 28px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2D2D2D;
+        }
+
+        .stats-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-mini {
+            background: linear-gradient(135deg, rgba(186, 104, 200, 0.05), rgba(156, 39, 176, 0.05));
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-mini-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #9C27B0;
+        }
+
+        .stat-mini-label {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 4px;
+        }
+
+        .risk-box {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .risk-box.yellow {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #FFC107;
+        }
+
+        .risk-box.red {
+            background: rgba(244, 67, 54, 0.1);
+            border-left: 4px solid #F44336;
+        }
+
+        .risk-box.green {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .risk-icon {
+            font-size: 24px;
+        }
+
+        .risk-content {
+            flex: 1;
+        }
+
+        .risk-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        .risk-text {
+            font-size: 14px;
+            color: #616161;
+            line-height: 1.5;
+        }
+
+        .trigger-list {
+            margin-top: 16px;
+        }
+
+        .trigger-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #F5F5F5;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .trigger-category {
+            font-weight: 600;
+            color: #2D2D2D;
+            min-width: 120px;
+        }
+
+        .trigger-percent {
+            background: #9C27B0;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .trigger-symptom {
+            color: #757575;
+            font-size: 14px;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            height: 200px;
+        }
+
+        /* HIDE/SHOW VIEWS */
+        .overview {
+            display: block;
+        }
+
+        .overview.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo-section">
+            <div class="logo">👶</div>
+            <div class="doctor-info">
+                <h3>Dr. Amina</h3>
+                <p>Obstetrician-Gynecologist</p>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item active">
+                <span class="nav-icon">🏠</span>
+                <span>Overview</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>Patients</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Analytics</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">🤖</span>
+                <span>AI Insights</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>Calendar</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">📄</span>
+                <span>Reports</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- OVERVIEW PAGE -->
+        <div class="overview" id="overviewPage">
+            <div class="header">
+                <div class="welcome-text">
+                    <h1>Welcome, Dr. Amina!</h1>
+                    <p>Pregnancy Monitoring Dashboard • Updated today at 14:30</p>
+                </div>
+            </div>
+
+            <!-- STATS CARDS -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value">142</div>
+                    <div class="stat-label">Active Patients</div>
+                    <span class="stat-change positive">↑ 12 this month</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">High Risk</div>
+                    <span class="stat-change negative">↑ 3 new</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value">94%</div>
+                    <div class="stat-label">Compliance with Plan</div>
+                    <span class="stat-change positive">↑ 2%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎉</div>
+                    <div class="stat-value">23</div>
+                    <div class="stat-label">Births this month</div>
+                    <span class="stat-change positive">Successfully</span>
+                </div>
+            </div>
+
+            <!-- PATIENTS TABLE -->
+            <div class="patients-section">
+                <div class="section-header">
+                    <h3 class="section-title">Your Patients</h3>
+                    <input type="text" placeholder="🔍 Search by name..." class="search-box">
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Пациентка</th>
+                            <th>Неделя</th>
+                            <th>Последнее обновление</th>
+                            <th>Уровень риска</th>
+                            <th>Новые симптомы</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr onclick="showPatientDetail('ivanova')">
+                            <td>
+                                <div class="patient-info">
+                                    <div class="patient-avatar">AG</div>
+                                    <div>
+                                        <div class="patient-name">Akhmetova Galiya</div>
+                                        <div class="patient-id">ID: #102938</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>14 weeks and 3 days</strong></td>
+                            <td>2 hours ago</td>
+                            <td><span class="risk-badge risk-high">High</span></td>
+                            <td>Cramping, constipation</td>
+                            <td><button class="action-btn" onclick="event.stopPropagation(); showPatientDetail('ivanova')">Open</button></td>
+                        </tr>
+                        <tr onclick="showPatientDetail('kasymova')">
+                            <td>
+                                <div class="patient-info">
+                                    <div class="patient-avatar">КА</div>
+                                    <div>
+                                        <div class="patient-name">Kasymova Aynur</div>
+                                        <div class="patient-id">ID: #102937</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>32 weeks</strong></td>
+                            <td>Yesterday</td>
+                            <td><span class="risk-badge risk-medium">Medium</span></td>
+                            <td>Swelling, headache</td>
+                            <td><button class="action-btn" onclick="event.stopPropagation(); showPatientDetail('kasymova')">Open</button></td>
+                        </tr>
+                        <tr onclick="showPatientDetail('nurlanova')">
+                            <td>
+                                <div class="patient-info">
+                                    <div class="patient-avatar">ND</div>
+                                    <div>
+                                        <div class="patient-name">Nurlanova Dina</div>
+                                        <div class="patient-id">ID: #102936</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>18 weeks</strong></td>
+                            <td>3 days ago</td>
+                            <td><span class="risk-badge risk-low">Low</span></td>
+                            <td>Normal</td>
+                            <td><button class="action-btn" onclick="event.stopPropagation(); showPatientDetail('nurlanova')">Open</button></td>
+                        </tr>
+                        <tr onclick="showPatientDetail('abdullina')">
+                            <td>
+                                <div class="patient-info">
+                                    <div class="patient-avatar">AS</div>
+                                    <div>
+                                        <div class="patient-name">Abdullina Saule</div>
+                                        <div class="patient-id">ID: #102935</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>26 weeks</strong></td>
+                            <td>Today</td>
+                            <td><span class="risk-badge risk-medium">Medium</span></td>
+                            <td>Nausea</td>
+                            <td><button class="action-btn" onclick="event.stopPropagation(); showPatientDetail('abdullina')">Open</button></td>
+                        </tr>
+                        <tr onclick="showPatientDetail('shapagatova')">
+                            <td>
+                                <div class="patient-info">
+                                    <div class="patient-avatar">SZ</div>
+                                    <div>
+                                        <div class="patient-name">Shapagatova Zhanar</div>
+                                        <div class="patient-id">ID: #102934</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>12 weeks</strong></td>
+                            <td>4 days ago</td>
+                            <td><span class="risk-badge risk-low">Low</span></td>
+                            <td>Normal</td>
+                            <td><button class="action-btn">Open</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PATIENT DETAIL PAGE -->
+        <div class="patient-detail" id="patientDetailPage">
+            <button class="back-btn" onclick="showOverview()">
+                <span>←</span>
+                <span>Назад к списку</span>
+            </button>
+
+            <!-- PATIENT PASSPORT -->
+            <div class="patient-passport">
+                <div class="passport-grid">
+                    <div class="patient-avatar-large">👩</div>
+                    
+                    <div class="patient-info-detail">
+                        <h1>Akhmetova Galiya</h1>
+                        <p style="opacity: 0.9; margin-bottom: 16px;">ID: #102934 • 28 years</p>
+                        
+                        <div class="patient-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Pregnancy time </div>
+                                <div class="meta-value">14 weeks 3 days</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Trimester</div>
+                                <div class="meta-value">II Trimester</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Expected Giving Birth Date</div>
+                                <div class="meta-value">15.08.2026</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Height</div>
+                                <div class="meta-value">165 cm</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Weight before / Current</div>
+                                <div class="meta-value">58 / 61 kg</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Weight gain</div>
+                                <div class="meta-value">+3 kg</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="anamnez-warning">
+                        <div style="font-weight: 600; margin-bottom: 6px;">⚠️ The anamnesis is burdened</div>
+                        <div style="font-size: 14px; opacity: 0.9;">
+                            • Chronic gastritis<br>
+                            • Risk of anemia
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAIL CARDS -->
+            <div class="detail-grid">
+                <!-- ЖКТ И ТОКСИКОЗ -->
+                <div class="detail-card">
+                    <div class="card-header">
+                        <span class="card-icon">🤢</span>
+                        <h3 class="card-title">Gastrointestinal and Toxicosis</h3>
+                    </div>
+
+                    <div class="stats-mini">
+                        <div class="stat-mini">
+                            <div class="stat-mini-value">4</div>
+                            <div class="stat-mini-label">Attacks/day</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="stat-mini-value">-20%</div>
+                            <div class="stat-mini-label">Trend</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="stat-mini-value">07-10</div>
+                            <div class="stat-mini-label">Peak</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="toxicosisChart"></canvas>
+                    </div>
+
+                    <div class="risk-box yellow">
+                        <span class="risk-icon">🟡</span>
+                        <div class="risk-content">
+                            <div class="risk-title">Risk of Dehydration</div>
+                            <div class="risk-text">With 5+ attacks, an electrolyte balance is recommended</div>
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 20px 0 12px; font-size: 15px; font-weight: 600;">Trigger Map</h4>
+                    <div class="trigger-list">
+                        <div class="trigger-item">
+                            <span class="trigger-category">Diary products</span>
+                            <span class="trigger-percent">80%</span>
+                            <span class="trigger-symptom">Bloating</span>
+                        </div>
+                        <div class="trigger-item">
+                            <span class="trigger-category">Meat products</span>
+                            <span class="trigger-percent">50%</span>
+                            <span class="trigger-symptom">Disgust</span>
+                        </div>
+                        <div class="trigger-item">
+                            <span class="trigger-category">Carbohydrates</span>
+                            <span class="trigger-percent" style="background: #4CAF50;">0%</span>
+                            <span class="trigger-symptom">Normal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- БОЛИ И ТОНУС -->
+                <div class="detail-card">
+                    <div class="card-header">
+                        <span class="card-icon">⚠️</span>
+                        <h3 class="card-title">Pains and Tonus</h3>
+                    </div>
+
+                    <div class="stats-mini">
+                        <div class="stat-mini">
+                            <div class="stat-mini-value">3</div>
+                            <div class="stat-mini-label">Episodes/24h</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="stat-mini-value">5-15</div>
+                            <div class="stat-mini-label">Minutes</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="stat-mini-value">100%</div>
+                            <div class="stat-mini-label">After load</div>
+                        </div>
+                    </div>
+
+                    <div class="risk-box red">
+                        <span class="risk-icon">🔴</span>
+                        <div class="risk-content">
+                            <div class="risk-title">Risk of Hypertonus!</div>
+                            <div class="risk-text">Ultrasound (cervicommetry) within 48h. Limit activity to 2000 steps/day.</div>
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 20px 0 12px; font-size: 15px; font-weight: 600;">Gastrointestinal function</h4>
+                    
+                    <div style="background: #F5F5F5; padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 600;">Stool Status</span>
+                            <span style="color: #9C27B0; font-weight: 700; font-size: 20px;">48ч</span>
+                        </div>
+                        <div style="font-size: 13px; color: #757575; margin-top: 4px;">No defecation</div>
+                    </div>
+
+                    <div class="risk-box yellow">
+                        <span class="risk-icon">⚠️</span>
+                        <div class="risk-content">
+                            <div class="risk-title">Constipation</div>
+                            <div class="risk-text">Risk of hemorrhoids. Increase fiber to 25g/day + mild laxatives.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- СОН -->
+                <div class="detail-card">
+                    <div class="card-header">
+                        <span class="card-icon">😴</span>
+                        <h3 class="card-title">Sleep and Recovery</h3>
+                    </div>
+
+                    <div class="stats-mini">
+                        <div class="stat-mini">
+                            <div class="stat-mini-value">6.5ч</div>
+                            <div class="stat-mini-label">Sleep/night</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="stat-mini-value">3</div>
+                            <div class="stat-mini-label">Awakenings</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="stat-mini-value">8-9ч</div>
+                            <div class="stat-mini-label">Norm</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="sleepChart"></canvas>
+                    </div>
+
+                    <div class="risk-box yellow">
+                        <span class="risk-icon">🟡</span>
+                        <div class="risk-content">
+                            <div class="risk-title">Accumulated fatigue</div>
+                            <div class="risk-text">Deficit 1.5-2.5h. Risk of elevated cortisol. Recommended 30-40 min daytime nap.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI ПРОГНОЗ -->
+                <div class="detail-card">
+                    <div class="card-header">
+                        <span class="card-icon">🤖</span>
+                        <h3 class="card-title">AI Forecast</h3>
+                    </div>
+
+                    <div class="trigger-list">
+                        <div style="background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.05)); padding: 16px; border-radius: 12px; border-left: 4px solid #F44336; margin-bottom: 12px;">
+                            <div style="font-weight: 600; margin-bottom: 6px;">🩸 Risk of anemia</div>
+                            <div style="font-size: 14px; color: #616161; margin-bottom: 8px;">Dislike of meat → decreased ferritin</div>
+                            <div style="background: #F44336; color: white; padding: 6px 12px; border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">Lab tests in 7 days</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05)); padding: 16px; border-radius: 12px; border-left: 4px solid #FFC107; margin-bottom: 12px;">
+                            <div style="font-weight: 600; margin-bottom: 6px;">💧 Control of edema</div>
+                            <div style="font-size: 14px; color: #616161; margin-bottom: 8px;">Low diuresis (0.5l instead of 2l)</div>
+                            <div style="background: #FFC107; color: white; padding: 6px 12px; border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">Protein in urine</div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(156, 39, 176, 0.05)); padding: 16px; border-radius: 12px; border-left: 4px solid #9C27B0;">
+                            <div style="font-weight: 600; margin-bottom: 6px;">💊 Compliance 40%</div>
+                            <div style="font-size: 14px; color: #616161; margin-bottom: 8px;">Frequent vitamin skips</div>
+                            <div style="background: #9C27B0; color: white; padding: 6px 12px; border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">Push notifications</div>
+                        </div>
+                    </div>
+
+                    <h4 style="margin: 24px 0 12px; font-size: 15px; font-weight: 600;">Screenings</h4>
+                    
+                    <div class="trigger-list">
+                        <div class="trigger-item">
+                            <span style="font-weight: 600;">📅 II Screening</span>
+                            <span style="margin-left: auto; color: #9C27B0; font-weight: 600;">4 weeks</span>
+                        </div>
+                        <div class="trigger-item">
+                            <span style="font-weight: 600;">👨‍⚕️ Gastroenterologist</span>
+                            <span style="margin-left: auto; color: #F44336; font-weight: 600;">URGENT</span>
+                        </div>
+                        <div class="trigger-item">
+                            <span style="font-weight: 600;">🔬 Ultrasound</span>
+                            <span style="margin-left: auto; color: #F44336; font-weight: 600;">48 hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // NAVIGATION
+        function showPatientDetail(patientId) {
+            document.getElementById('overviewPage').classList.add('hidden');
+            document.getElementById('patientDetailPage').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function showOverview() {
+            document.getElementById('overviewPage').classList.remove('hidden');
+            document.getElementById('patientDetailPage').classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+
+        // CHARTS
+        window.addEventListener('load', function() {
+            // Toxicosis Chart
+            const ctx1 = document.getElementById('toxicosisChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'],
+                    datasets: [{
+                        label: 'Episodes',
+                        data: [6, 5, 5, 4, 4, 4, 4],
+                        borderColor: '#9C27B0',
+                        backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 10 } }
+                }
+            });
+
+            // Sleep Chart
+            const ctx2 = document.getElementById('sleepChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'],
+                    datasets: [{
+                        label: 'Hours',
+                        data: [7, 6, 6.5, 7, 6.5, 5.5, 6.5],
+                        backgroundColor: 'rgba(156, 39, 176, 0.7)',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 10 } }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
