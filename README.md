@@ -9,7 +9,7 @@
   
   **AI-powered preventive pregnancy monitoring system**
   
-  [📱 Download APK](#installation) • [📖 Documentation](#documentation) • [🎯 About](#about)
+  [📱 Download APK](#installation) •[💻 Live Dashboard Demo](dashbord.html) [📖 Documentation](#documentation) • [🎯 About](#about)
   
 </div>
 
@@ -169,8 +169,8 @@ Responsive:      Mobile-first design
 ```
 API:             RESTful API
 AI Model:        Claude API (Anthropic) for chat and analysis
-AI Menu Gen:     GPT-based personalized menu generation
-Database:        PostgreSQL / Firebase
+AI Menu Gen:     Claude API personalized menu generation
+Database:        Room now, planned PostgreSQL / Firebase
 Analytics:       Custom algorithms for trigger detection
 ```
 
@@ -178,7 +178,7 @@ Analytics:       Custom algorithms for trigger detection
 
 ## 🏗 Architecture <a name="architecture"></a>
 
-### Mobile App Structure
+### Mobile App General Structure
 ```
 app/
 ├── src/main/java/kz/anam/
